@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:minWidth="250dp"
+    android:minHeight="40dp"
+
+    android:minResizeWidth="250dp"
+    android:minResizeHeight="40dp"
+
+    android:resizeMode="horizontal"
+
+    android:updatePeriodMillis="0"
+
+    android:initialLayout="@layout/retro_brightness_widget"
+
+    android:widgetCategory="home_screen" />
