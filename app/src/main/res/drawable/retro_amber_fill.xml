@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Soft amber glow -->
+    <item
+        android:top="2dp"
+        android:bottom="2dp">
+
+        <shape android:shape="rectangle">
+
+            <solid android:color="#6B3D08" />
+
+            <corners android:radius="1000dp" />
+
+        </shape>
+
+    </item>
+
+    <!-- Main illuminated amber -->
+    <item
+        android:left="1dp"
+        android:right="1dp"
+        android:top="3dp"
+        android:bottom="3dp">
+
+        <shape android:shape="rectangle">
+
+            <gradient
+                android:angle="90"
+                android:startColor="#8F4D08"
+                android:centerColor="#D88918"
+                android:endColor="#A85A0A" />
+
+            <corners android:radius="1000dp" />
+
+        </shape>
+
+    </item>
+
+    <!-- Hot central highlight -->
+    <item
+        android:left="3dp"
+        android:right="3dp"
+        android:top="4dp"
+        android:bottom="4dp">
+
+        <shape android:shape="rectangle">
+
+            <solid android:color="#E6A33A" />
+
+            <corners android:radius="1000dp" />
+
+        </shape>
+
+    </item>
+
+</layer-list>
