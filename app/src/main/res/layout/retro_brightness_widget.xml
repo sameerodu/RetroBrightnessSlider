@@ -11,7 +11,6 @@
     android:paddingTop="7dp"
     android:paddingBottom="7dp">
 
-    <!-- Left dim-brightness symbol -->
     <TextView
         android:id="@+id/dim_icon"
         android:layout_width="34dp"
@@ -23,34 +22,33 @@
         android:textSize="23sp"
         android:includeFontPadding="false" />
 
-    <!-- Recessed slider channel -->
-    <View
+    <TextView
         android:id="@+id/slider_channel"
         android:layout_width="match_parent"
         android:layout_height="16dp"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="38dp"
         android:layout_marginEnd="38dp"
-        android:background="@drawable/retro_slider_channel" />
+        android:background="@drawable/retro_slider_channel"
+        android:text="" />
 
-    <!-- Amber illuminated section -->
-    <View
+    <TextView
         android:id="@+id/slider_amber"
         android:layout_width="42dp"
         android:layout_height="10dp"
         android:layout_gravity="start|center_vertical"
         android:layout_marginStart="41dp"
-        android:background="@drawable/retro_amber_fill" />
+        android:background="@drawable/retro_amber_fill"
+        android:text="" />
 
-    <!-- Metal knob -->
-    <View
+    <TextView
         android:id="@+id/slider_knob"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center"
-        android:background="@drawable/retro_metal_knob" />
+        android:background="@drawable/retro_metal_knob"
+        android:text="" />
 
-    <!-- Right bright symbol -->
     <TextView
         android:id="@+id/bright_icon"
         android:layout_width="34dp"
