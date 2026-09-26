@@ -2,6 +2,7 @@ package com.retrobrightness;
 
 import android.media.AudioAttributes;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioTrack;
 
 import java.util.concurrent.ExecutorService;
@@ -19,11 +20,19 @@ public class SoundEngine {
     private AudioTrack slideTrack;
 
     public void grab() {
-        playMechanicalClick(0.085f, 1250f, 720f);
+        playMechanicalClick(
+                0.085f,
+                1250f,
+                720f
+        );
     }
 
     public void release() {
-        playMechanicalClick(0.060f, 920f, 510f);
+        playMechanicalClick(
+                0.060f,
+                920f,
+                510f
+        );
     }
 
     public void startSliding() {
@@ -46,18 +55,24 @@ public class SoundEngine {
                 AudioAttributes attributes =
                         new AudioAttributes.Builder()
                                 .setUsage(
-                                        AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                                        AudioAttributes.USAGE_ASSISTANCE_SONIFICATION
+                                )
                                 .setContentType(
-                                        AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                        AudioAttributes.CONTENT_TYPE_SONIFICATION
+                                )
                                 .build();
 
                 AudioFormat format =
                         new AudioFormat.Builder()
                                 .setEncoding(
-                                        AudioFormat.ENCODING_PCM_16BIT)
-                                .setSampleRate(SAMPLE_RATE)
+                                        AudioFormat.ENCODING_PCM_16BIT
+                                )
+                                .setSampleRate(
+                                        SAMPLE_RATE
+                                )
                                 .setChannelMask(
-                                        AudioFormat.CHANNEL_OUT_MONO)
+                                        AudioFormat.CHANNEL_OUT_MONO
+                                )
                                 .build();
 
                 slideTrack =
@@ -66,7 +81,7 @@ public class SoundEngine {
                                 format,
                                 bufferSamples * 2,
                                 AudioTrack.MODE_STREAM,
-                                AudioTrack.AUDIO_SESSION_ID_GENERATE
+                                AudioManager.AUDIO_SESSION_ID_GENERATE
                         );
 
                 slideTrack.play();
@@ -143,6 +158,7 @@ public class SoundEngine {
     public void stopSliding() {
 
         sliding = false;
+
         stopTrack();
     }
 
@@ -187,8 +203,7 @@ public class SoundEngine {
 
                 double envelope =
                         Math.exp(
-                                -t
-                                        * 55.0
+                                -t * 55.0
                         );
 
                 double tone1 =
@@ -245,18 +260,24 @@ public class SoundEngine {
             AudioAttributes attributes =
                     new AudioAttributes.Builder()
                             .setUsage(
-                                    AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                                    AudioAttributes.USAGE_ASSISTANCE_SONIFICATION
+                            )
                             .setContentType(
-                                    AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                    AudioAttributes.CONTENT_TYPE_SONIFICATION
+                            )
                             .build();
 
             AudioFormat format =
                     new AudioFormat.Builder()
                             .setEncoding(
-                                    AudioFormat.ENCODING_PCM_16BIT)
-                            .setSampleRate(SAMPLE_RATE)
+                                    AudioFormat.ENCODING_PCM_16BIT
+                            )
+                            .setSampleRate(
+                                    SAMPLE_RATE
+                            )
                             .setChannelMask(
-                                    AudioFormat.CHANNEL_OUT_MONO)
+                                    AudioFormat.CHANNEL_OUT_MONO
+                            )
                             .build();
 
             track =
@@ -265,7 +286,7 @@ public class SoundEngine {
                             format,
                             data.length * 2,
                             AudioTrack.MODE_STATIC,
-                            AudioTrack.AUDIO_SESSION_ID_GENERATE
+                            AudioManager.AUDIO_SESSION_ID_GENERATE
                     );
 
             track.write(
@@ -303,6 +324,7 @@ public class SoundEngine {
     public void releaseResources() {
 
         sliding = false;
+
         stopTrack();
 
         audioExecutor.shutdownNow();
