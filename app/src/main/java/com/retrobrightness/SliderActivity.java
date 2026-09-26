@@ -3,12 +3,14 @@ package com.retrobrightness;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.MotionEvent;
@@ -19,6 +21,7 @@ import android.view.WindowManager;
 public class SliderActivity extends Activity {
 
     private RetroSliderView sliderView;
+    private SoundEngine soundEngine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +37,21 @@ public class SliderActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
 
+        soundEngine = new SoundEngine();
+
         sliderView = new RetroSliderView(this);
 
         setContentView(sliderView);
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        if (soundEngine != null) {
+            soundEngine.releaseResources();
+        }
+
+        super.onDestroy();
     }
 
     @Override
@@ -44,16 +59,25 @@ public class SliderActivity extends Activity {
         finish();
     }
 
-    private static class RetroSliderView extends View {
+    private class RetroSliderView extends View {
 
-        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint paint =
+                new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        private final RectF body = new RectF();
-        private final RectF channel = new RectF();
-        private final RectF amber = new RectF();
+        private final Paint shadowPaint =
+                new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        private final RectF body =
+                new RectF();
+
+        private final RectF channel =
+                new RectF();
+
+        private final RectF amber =
+                new RectF();
 
         private float brightness;
+
         private boolean dragging = false;
 
         private final float density;
@@ -61,13 +85,21 @@ public class SliderActivity extends Activity {
         RetroSliderView(Context context) {
             super(context);
 
-            density = getResources()
-                    .getDisplayMetrics()
-                    .density;
+            density =
+                    getResources()
+                            .getDisplayMetrics()
+                            .density;
 
-            setBackgroundColor(Color.rgb(24, 21, 18));
+            setBackgroundColor(
+                    Color.rgb(
+                            18,
+                            16,
+                            14
+                    )
+            );
 
-            brightness = readBrightness();
+            brightness =
+                    readBrightness();
 
             setFocusable(true);
             setFocusableInTouchMode(true);
@@ -77,11 +109,12 @@ public class SliderActivity extends Activity {
 
             try {
 
-                int value = Settings.System.getInt(
-                        getContentResolver(),
-                        Settings.System.SCREEN_BRIGHTNESS,
-                        128
-                );
+                int value =
+                        Settings.System.getInt(
+                                getContentResolver(),
+                                Settings.System.SCREEN_BRIGHTNESS,
+                                128
+                        );
 
                 return Math.max(
                         0f,
@@ -97,23 +130,31 @@ public class SliderActivity extends Activity {
             }
         }
 
-        private void writeBrightness(float level) {
+        private void writeBrightness(
+                float level) {
 
-            if (!Settings.System.canWrite(SliderActivity.this)) {
+            if (!Settings.System.canWrite(
+                    SliderActivity.this)) {
+
+                requestWritePermission();
+
                 return;
             }
 
-            int value = Math.round(
-                    1f + level * 254f
-            );
+            int value =
+                    Math.round(
+                            1f
+                                    + level * 254f
+                    );
 
-            value = Math.max(
-                    1,
-                    Math.min(
-                            255,
-                            value
-                    )
-            );
+            value =
+                    Math.max(
+                            1,
+                            Math.min(
+                                    255,
+                                    value
+                            )
+                    );
 
             try {
 
@@ -136,13 +177,30 @@ public class SliderActivity extends Activity {
             }
         }
 
+        private void requestWritePermission() {
+
+            Intent intent =
+                    new Intent(
+                            Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                            Uri.parse(
+                                    "package:"
+                                            + getPackageName()
+                    )
+            );
+
+            startActivity(intent);
+        }
+
         @Override
         protected void onDraw(Canvas canvas) {
 
             super.onDraw(canvas);
 
-            float width = getWidth();
-            float height = getHeight();
+            float width =
+                    getWidth();
+
+            float height =
+                    getHeight();
 
             float controlWidth =
                     Math.min(
@@ -154,10 +212,12 @@ public class SliderActivity extends Activity {
                     120f * density;
 
             float left =
-                    (width - controlWidth) / 2f;
+                    (width - controlWidth)
+                            / 2f;
 
             float top =
-                    (height - controlHeight) / 2f;
+                    (height - controlHeight)
+                            / 2f;
 
             body.set(
                     left,
@@ -175,22 +235,24 @@ public class SliderActivity extends Activity {
 
         private void drawBody(Canvas canvas) {
 
-            float radius = body.height() / 2f;
+            float radius =
+                    body.height() / 2f;
 
             shadowPaint.setColor(
                     Color.argb(
-                            150,
+                            170,
                             0,
                             0,
                             0
                     )
             );
 
-            RectF shadow = new RectF(body);
+            RectF shadow =
+                    new RectF(body);
 
             shadow.offset(
                     0,
-                    8f * density
+                    9f * density
             );
 
             canvas.drawRoundRect(
@@ -207,10 +269,26 @@ public class SliderActivity extends Activity {
                             0,
                             body.bottom,
                             new int[]{
-                                    Color.rgb(166, 153, 132),
-                                    Color.rgb(241, 229, 207),
-                                    Color.rgb(198, 184, 160),
-                                    Color.rgb(132, 119, 101)
+                                    Color.rgb(
+                                            166,
+                                            153,
+                                            132
+                                    ),
+                                    Color.rgb(
+                                            241,
+                                            229,
+                                            207
+                                    ),
+                                    Color.rgb(
+                                            198,
+                                            184,
+                                            160
+                                    ),
+                                    Color.rgb(
+                                            132,
+                                            119,
+                                            101
+                                    )
                             },
                             null,
                             Shader.TileMode.CLAMP
@@ -227,8 +305,14 @@ public class SliderActivity extends Activity {
 
             paint.setShader(null);
 
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(2f * density);
+            paint.setStyle(
+                    Paint.Style.STROKE
+            );
+
+            paint.setStrokeWidth(
+                    2f * density
+            );
+
             paint.setColor(
                     Color.rgb(
                             255,
@@ -239,10 +323,14 @@ public class SliderActivity extends Activity {
 
             RectF highlight =
                     new RectF(
-                            body.left + 2f * density,
-                            body.top + 2f * density,
-                            body.right - 2f * density,
-                            body.bottom - 2f * density
+                            body.left
+                                    + 2f * density,
+                            body.top
+                                    + 2f * density,
+                            body.right
+                                    - 2f * density,
+                            body.bottom
+                                    - 2f * density
                     );
 
             canvas.drawRoundRect(
@@ -252,16 +340,20 @@ public class SliderActivity extends Activity {
                     paint
             );
 
-            paint.setStyle(Paint.Style.FILL);
+            paint.setStyle(
+                    Paint.Style.FILL
+            );
         }
 
         private void drawChannel(Canvas canvas) {
 
             float channelLeft =
-                    body.left + 82f * density;
+                    body.left
+                            + 82f * density;
 
             float channelRight =
-                    body.right - 82f * density;
+                    body.right
+                            - 82f * density;
 
             float channelHeight =
                     25f * density;
@@ -271,9 +363,11 @@ public class SliderActivity extends Activity {
 
             channel.set(
                     channelLeft,
-                    centerY - channelHeight / 2f,
+                    centerY
+                            - channelHeight / 2f,
                     channelRight,
-                    centerY + channelHeight / 2f
+                    centerY
+                            + channelHeight / 2f
             );
 
             paint.setColor(
@@ -291,8 +385,14 @@ public class SliderActivity extends Activity {
                     paint
             );
 
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(2f * density);
+            paint.setStyle(
+                    Paint.Style.STROKE
+            );
+
+            paint.setStrokeWidth(
+                    2f * density
+            );
+
             paint.setColor(
                     Color.rgb(
                             91,
@@ -308,29 +408,36 @@ public class SliderActivity extends Activity {
                     paint
             );
 
-            paint.setStyle(Paint.Style.FILL);
+            paint.setStyle(
+                    Paint.Style.FILL
+            );
         }
 
         private void drawAmber(Canvas canvas) {
 
             float start =
-                    channel.left + 5f * density;
+                    channel.left
+                            + 5f * density;
 
             float end =
-                    channel.right - 5f * density;
+                    channel.right
+                            - 5f * density;
 
             float x =
-                    start +
-                    (end - start) * brightness;
+                    start
+                            + (end - start)
+                            * brightness;
 
             amber.set(
                     start,
-                    channel.top + 7f * density,
+                    channel.top
+                            + 7f * density,
                     Math.max(
                             start + 4f * density,
                             x
                     ),
-                    channel.bottom - 7f * density
+                    channel.bottom
+                            - 7f * density
             );
 
             LinearGradient amberGradient =
@@ -340,15 +447,29 @@ public class SliderActivity extends Activity {
                             0,
                             amber.bottom,
                             new int[]{
-                                    Color.rgb(122, 62, 5),
-                                    Color.rgb(226, 146, 35),
-                                    Color.rgb(157, 78, 7)
+                                    Color.rgb(
+                                            122,
+                                            62,
+                                            5
+                                    ),
+                                    Color.rgb(
+                                            226,
+                                            146,
+                                            35
+                                    ),
+                                    Color.rgb(
+                                            157,
+                                            78,
+                                            7
+                                    )
                             },
                             null,
                             Shader.TileMode.CLAMP
                     );
 
-            paint.setShader(amberGradient);
+            paint.setShader(
+                    amberGradient
+            );
 
             canvas.drawRoundRect(
                     amber,
@@ -363,21 +484,24 @@ public class SliderActivity extends Activity {
         private void drawKnob(Canvas canvas) {
 
             float start =
-                    channel.left + 5f * density;
+                    channel.left
+                            + 5f * density;
 
             float end =
-                    channel.right - 5f * density;
+                    channel.right
+                            - 5f * density;
 
             float x =
-                    start +
-                    (end - start) * brightness;
+                    start
+                            + (end - start)
+                            * brightness;
 
             float radius =
                     30f * density;
 
             shadowPaint.setColor(
                     Color.argb(
-                            170,
+                            180,
                             0,
                             0,
                             0
@@ -385,9 +509,9 @@ public class SliderActivity extends Activity {
             );
 
             canvas.drawCircle(
-                    x + 2f * density,
+                    x + 3f * density,
                     channel.centerY()
-                            + 4f * density,
+                            + 5f * density,
                     radius,
                     shadowPaint
             );
@@ -395,13 +519,27 @@ public class SliderActivity extends Activity {
             LinearGradient metal =
                     new LinearGradient(
                             x - radius,
-                            channel.centerY() - radius,
+                            channel.centerY()
+                                    - radius,
                             x + radius,
-                            channel.centerY() + radius,
+                            channel.centerY()
+                                    + radius,
                             new int[]{
-                                    Color.rgb(255, 250, 238),
-                                    Color.rgb(209, 198, 181),
-                                    Color.rgb(111, 101, 89)
+                                    Color.rgb(
+                                            255,
+                                            250,
+                                            238
+                                    ),
+                                    Color.rgb(
+                                            209,
+                                            198,
+                                            181
+                                    ),
+                                    Color.rgb(
+                                            111,
+                                            101,
+                                            89
+                                    )
                             },
                             null,
                             Shader.TileMode.CLAMP
@@ -418,8 +556,14 @@ public class SliderActivity extends Activity {
 
             paint.setShader(null);
 
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(2f * density);
+            paint.setStyle(
+                    Paint.Style.STROKE
+            );
+
+            paint.setStrokeWidth(
+                    2f * density
+            );
+
             paint.setColor(
                     Color.rgb(
                             68,
@@ -435,7 +579,9 @@ public class SliderActivity extends Activity {
                     paint
             );
 
-            paint.setStyle(Paint.Style.FILL);
+            paint.setStyle(
+                    Paint.Style.FILL
+            );
 
             paint.setColor(
                     Color.rgb(
@@ -447,21 +593,15 @@ public class SliderActivity extends Activity {
 
             canvas.drawCircle(
                     x - 8f * density,
-                    channel.centerY() - 9f * density,
+                    channel.centerY()
+                            - 9f * density,
                     5f * density,
                     paint
             );
         }
 
-        private void drawSunSymbols(Canvas canvas) {
-
-            paint.setColor(
-                    Color.rgb(
-                            87,
-                            78,
-                            67
-                    )
-            );
+        private void drawSunSymbols(
+                Canvas canvas) {
 
             paint.setTextAlign(
                     Paint.Align.CENTER
@@ -478,9 +618,18 @@ public class SliderActivity extends Activity {
                                     + paint.descent()
                     ) / 2f;
 
+            paint.setColor(
+                    Color.rgb(
+                            87,
+                            78,
+                            67
+                    )
+            );
+
             canvas.drawText(
                     "☼",
-                    body.left + 45f * density,
+                    body.left
+                            + 45f * density,
                     y,
                     paint
             );
@@ -495,37 +644,35 @@ public class SliderActivity extends Activity {
 
             canvas.drawText(
                     "☼",
-                    body.right - 45f * density,
+                    body.right
+                            - 45f * density,
                     y,
                     paint
             );
         }
 
         @Override
-        public boolean onTouchEvent(MotionEvent event) {
+        public boolean onTouchEvent(
+                MotionEvent event) {
 
-            float x = event.getX();
+            float x =
+                    event.getX();
 
-            float start =
-                    channel.left + 5f * density;
-
-            float end =
-                    channel.right - 5f * density;
-
-            switch (event.getActionMasked()) {
+            switch (
+                    event.getActionMasked()
+            ) {
 
                 case MotionEvent.ACTION_DOWN:
 
-                    if (isNearSlider(event.getX(), event.getY())) {
+                    dragging = true;
 
-                        dragging = true;
+                    updateFromTouch(x);
 
-                        updateFromTouch(x);
+                    soundEngine.grab();
 
-                        performClick();
+                    soundEngine.startSliding();
 
-                        return true;
-                    }
+                    performClick();
 
                     return true;
 
@@ -548,6 +695,10 @@ public class SliderActivity extends Activity {
 
                         dragging = false;
 
+                        soundEngine.stopSliding();
+
+                        soundEngine.release();
+
                         invalidate();
 
                         finish();
@@ -563,6 +714,10 @@ public class SliderActivity extends Activity {
 
                     dragging = false;
 
+                    soundEngine.stopSliding();
+
+                    soundEngine.release();
+
                     finish();
 
                     return true;
@@ -571,26 +726,16 @@ public class SliderActivity extends Activity {
             return true;
         }
 
-        private boolean isNearSlider(
-                float x,
-                float y) {
-
-            float verticalPadding =
-                    45f * density;
-
-            return x >= channel.left
-                    && x <= channel.right
-                    && y >= channel.top - verticalPadding
-                    && y <= channel.bottom + verticalPadding;
-        }
-
-        private void updateFromTouch(float x) {
+        private void updateFromTouch(
+                float x) {
 
             float start =
-                    channel.left + 5f * density;
+                    channel.left
+                            + 5f * density;
 
             float end =
-                    channel.right - 5f * density;
+                    channel.right
+                            - 5f * density;
 
             float level =
                     (x - start)
